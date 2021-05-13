@@ -6,7 +6,7 @@ import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
 // joel-hoelting-macbook-pro.local
 // sRwAAAYfam9lbC1ob2VsdGluZy1tYWNib29rLXByby5sb2NhbBHEkda9lDGk/qQU1mKvOiOGuDUHfB1D98VNEc58JmaaeKdsTSRYDSqsSYXcwL25daEqxb82zFO3HhvgvGGEEwBGISMiIRG9xfj3NzuWRifpxDi3U5FJIJZLE2cHbYgcCfUaLULjhxqJyoyUsXAZy4GG11M/v7PLKxQg280P6uoLV+PNq85kxvED1M+csmlnKdcKIHndfbVQEDhw+hVFLkxPxKKA5kEKERXdWKT3QRg=
 const blinkLicense =
-  'sRwAAAYfam9lbC1ob2VsdGluZy1tYWNib29rLXByby5sb2NhbBHEkda9lDGk/qQU1mKvOiOGuDUHfB1D98VNEc58JmaaeKdsTSRYDSqsSYXcwL25daEqxb82zFO3HhvgvGGEEwBGISMiIRG9xfj3NzuWRifpxDi3U5FJIJZLE2cHbYgcCfUaLULjhxqJyoyUsXAZy4GG11M/v7PLKxQg280P6uoLV+PNq85kxvED1M+csmlnKdcKIHndfbVQEDhw+hVFLkxPxKKA5kEKERXdWKT3QRg=';
+  'sRwAAAYJbG9jYWxob3N0r/lOPmg/w35CpOHWK+o5YN90QAi2XHJp/VoWzkCkzRGDNoXNS8cgkEYvMmeViNQjINvPBsbMFjDfjeeaLimUXEH3ONhyJtBfsxBd1yZXVpi3qqtFXSje7xcYDbgWMLqvrZ44OhlQIoYaTwP+u7ZowHsvO/cRKiSHaheMnmLnGkBAKp2UanYRlLUaBF+fSfOFHzBfBQMjX6DHrqQPskItGz9xPHZpftzSeE/hnqoI4g==';
 
 const InputScan = () => {
   const [showScanner, toggleShowScanner] = useState(false);
@@ -50,9 +50,9 @@ const InputScan = () => {
 
     const blinkCardRecognizer = await BlinkCardSDK.createBlinkCardRecognizer(blinkWasmSDK.current);
 
-    const callbacks = {
-      onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => alert('hello'),
-    };
+    // const callbacks = {
+    //   onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => alert('hello'),
+    // };
 
     const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
       // SDK instance to use
@@ -60,9 +60,8 @@ const InputScan = () => {
       // List of recognizer objects that will be associated with created RecognizerRunner object
       [blinkCardRecognizer],
       // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
-      false,
+      false
       // [OPTIONAL] Callbacks object that will receive recognition events
-      callbacks
     );
 
     const videoRecognizer = await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
@@ -71,8 +70,12 @@ const InputScan = () => {
     );
 
     const processResult = await videoRecognizer.recognize();
-    console.log(processResult);
-    console.log('trigger');
+    if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
+      const recognitionResult = await blinkCardRecognizer.getResult();
+      console.log(recognitionResult);
+    } else {
+      console.log('Recognition was not successful!');
+    }
   };
 
   return (
