@@ -92,9 +92,10 @@ const CardScanner: React.FC<CardScannerProps> = ({ active, handleCancelScan, han
     if (blinkWasmSDK.current && cameraFeed.current) {
       recognizer.current = await BlinkCardSDK.createBlinkCardRecognizer(blinkWasmSDK.current);
 
-      // const callbacks = {
-      //   onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => triggerThis('hello'),
-      // };
+      const callbacks = {
+        onQuadDetection: (quad: BlinkCardSDK.DisplayableQuad) => console.log('quad detected'),
+        onFirstSideResult: () => alert('Flip the document'),
+      };
 
       recognizerRunner.current = await BlinkCardSDK.createRecognizerRunner(
         // SDK instance to use
@@ -102,9 +103,9 @@ const CardScanner: React.FC<CardScannerProps> = ({ active, handleCancelScan, han
         // List of recognizer objects that will be associated with created RecognizerRunner object
         [recognizer.current],
         // [OPTIONAL] Should recognition pipeline stop as soon as first recognizer in chain finished recognition
-        false
+        false,
         // [OPTIONAL] Callbacks object that will receive recognition events
-        //   callbacks,
+        callbacks
       );
 
       try {
